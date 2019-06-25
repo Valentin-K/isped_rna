@@ -43,7 +43,7 @@ coldata = cbind(coldata, do.call(rbind,separated))
 colnames(coldata) [c(2,3)] <- c("id", "day")
 dds <- DESeqDataSetFromMatrix (countData = onlyexpressed, # matrix for DESEQ2 analysis
                               colData = coldata, # Rows of colData correspond to columns of countData
-                              design = ~ V2 + V3 ) #  V2 is subject number anf V2 is day from vaccination
+                              design = V2 ~ V3 ) #  V2 is subject number anf V2 is day from vaccination
 
 #formula corresponding to each DDSObject, 
 # e.g., ~ group + condition, and designs with interactions, e.g., ~ genotype + treatment + genotype:treatment,
@@ -97,6 +97,17 @@ plotMA(resLFC, ylim=c(-2,2))
 
 # Alternative shrinkage estimators
 
+
+#------------------ Code Hadrien
+counts <- DESeq::counts(dds)
+toKeep <- which(SummarizedExperiment::colData(se)$day %in% c(0,1,3,7))
+coldataSE <- SummarizedExperiment::colData(se)[toKeep,]
+day <- factor(coldataSE$day)#,labels = c("_d0","_d1","_d3","_d7"))
+id_num <- factor(coldataSE$id_num)
+group <- rep(1,length(id_num))
+group[which(as.numeric(levels(id_num)[id_num])>10)] <-2
+design <- model.matri~0+day);colnames(design);rownames(design) <-
+  colnames(counts)
 
 
 
